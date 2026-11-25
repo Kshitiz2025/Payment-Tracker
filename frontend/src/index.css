@@ -1,0 +1,52 @@
+@import "tailwindcss";
+
+:root { color-scheme: light dark; }
+:root[data-theme="light"] { color-scheme: light; }
+:root[data-theme="dark"] { color-scheme: dark; }
+
+@theme {
+  --color-canvas: light-dark(#f8fafc, #101722);
+  --color-surface: light-dark(white, #1b2533);
+  --color-subtle: light-dark(var(--color-gray-50), #151e2b);
+  --color-muted: light-dark(var(--color-gray-100), #283547);
+  --color-track: light-dark(var(--color-gray-200), #37465a);
+  --color-heading: light-dark(var(--color-gray-900), #eff4fb);
+  --color-body: light-dark(var(--color-gray-700), #d0dae7);
+  --color-secondary: light-dark(var(--color-gray-600), #b9c5d5);
+  --color-quiet: light-dark(var(--color-gray-500), #a9b6c8);
+  --color-hint: light-dark(var(--color-gray-400), #9baabe);
+  --color-divider: light-dark(var(--color-gray-100), #324054);
+  --color-outline: light-dark(var(--color-gray-200), #465569);
+  --color-strong-outline: light-dark(var(--color-gray-300), #61728a);
+  --color-sign-in: light-dark(#0b0f19, #4942ad);
+  --color-sign-in-hover: light-dark(var(--color-gray-800), #5951c6);
+  --color-brand-shadow: light-dark(var(--color-indigo-200), #111525);
+  --color-danger-shadow: light-dark(var(--color-red-200), #291820);
+  --color-red-ink: light-dark(var(--color-red-700), var(--color-red-300));
+  --color-amber-ink: light-dark(var(--color-amber-700), var(--color-amber-300));
+  --color-emerald-ink: light-dark(var(--color-emerald-700), var(--color-emerald-300));
+  --color-blue-tint: light-dark(var(--color-blue-100), color-mix(in srgb, var(--color-blue-400) 20%, #1b2533));
+  --color-indigo-tint: light-dark(var(--color-indigo-100), color-mix(in srgb, var(--color-indigo-400) 20%, #1b2533));
+  --color-indigo-ink: light-dark(var(--color-indigo-700), var(--color-indigo-300));
+  --color-red-wash: light-dark(var(--color-red-50), #41252e);
+  --color-indigo-wash: light-dark(var(--color-indigo-50), #292a4c);
+  --color-red-tint: light-dark(var(--color-red-100), color-mix(in srgb, var(--color-red-400) 20%, #1b2533));
+  --color-emerald-wash: light-dark(var(--color-emerald-50), #193a32);
+  --color-emerald-tint: light-dark(var(--color-emerald-100), color-mix(in srgb, var(--color-emerald-400) 20%, #1b2533));
+  --color-blue-wash: light-dark(var(--color-blue-50), #1b324b);
+  --color-blue-ink: light-dark(var(--color-blue-700), var(--color-blue-300));
+  --color-amber-wash: light-dark(var(--color-amber-50), #3c3022);
+  --color-purple-wash: light-dark(var(--color-purple-50), #302644);
+  --color-purple-ink: light-dark(var(--color-purple-700), var(--color-purple-300));
+  --color-green-wash: light-dark(var(--color-green-50), #1a362a);
+  --color-green-ink: light-dark(var(--color-green-700), var(--color-green-300));
+  --color-purple-tint: light-dark(var(--color-purple-100), color-mix(in srgb, var(--color-purple-400) 20%, #1b2533));
+  --color-pink-tint: light-dark(var(--color-pink-100), color-mix(in srgb, var(--color-pink-400) 20%, #1b2533));
+  --color-pink-ink: light-dark(var(--color-pink-700), var(--color-pink-300));
+  --color-green-tint: light-dark(var(--color-green-100), color-mix(in srgb, var(--color-green-400) 20%, #1b2533));
+}
+
+body {
+  background-color: var(--color-canvas);
+  color: var(--color-heading);
+}

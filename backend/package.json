@@ -1,0 +1,27 @@
+{
+  "name": "trackit-backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "node --watch index.js",
+    "start": "node index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@anthropic-ai/sdk": "^1.14.0",
+    "@google/genai": "^3.6.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "express-rate-limit": "^8.7.5",
+    "helmet": "^8.3.0",
+    "openai": "^7.64.0"
+  },
+  "engines": {
+    "node": ">=22.13"
+  }
+}
