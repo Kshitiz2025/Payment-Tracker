@@ -114,16 +114,32 @@ app.post('/api/analyze', async (req, res, next) => {
     if (!tones.has(tone) || !Array.isArray(groups) || !groups.length || groups.length > 64 ||
       groups.some(g => !g || !validName(g.category) || !validMoney(g.total) || !Number.isSafeInteger(g.count) || g.count < 1 || g.count > 10000000)) return bad(res);
     if (!reserve(req, res)) return;
-    const aggregates = groups.map(g => ({ category: known.has(g.category) ? g.category : 'Other', total: g.total, count: g.count }));
-    const answer = await generate('Summarize these expense totals in INR in three sentences. Tone: ' + tone, aggregates, text => {
+
+    const aggregates = groups.map(g => ({
+      category: known.has(g.category) ? g.category : 'Other',
+      amount_inr: g.total,
+      formatted_inr: '₹' + g.total.toLocaleString('en-IN', { minimumFractionDigits: 0, maximumFractionDigits: 2 }),
+      count: g.count,
+    }));
+
+    const instruction =
+      'Summarize these expense totals in three sentences. ' +
+      'IMPORTANT: Every amount is ALREADY in Indian Rupees (INR / ₹). ' +
+      'Do NOT treat amounts as USD or apply any currency exchange rate. Use the exact ₹ numbers provided. ' +
+      'Tone: ' + tone;
+
+    const answer = await generate(instruction, { currency: 'INR', expenses: aggregates }, text => {
       if (typeof text !== 'string' || !text.trim() || text.length > 6000) throw new Error();
       return text.trim();
     });
-    const sum = aggregates.reduce((n, g) => n + Math.round(g.total * 100), 0) / 100;
-    res.json({ insight: answer?.result || 'Total recorded spending in this selection is ₹' + sum.toLocaleString('en-IN') + '.', provider: answer?.provider || 'Trackit local summary' });
+
+    const sum = aggregates.reduce((n, g) => n + Math.round(g.amount_inr * 100), 0) / 100;
+    res.json({
+      insight: answer?.result || 'Total recorded spending in this selection is ₹' + sum.toLocaleString('en-IN') + '.',
+      provider: answer?.provider || 'Trackit local summary',
+    });
   } catch (error) { next(error); }
 });
-
 app.post('/api/suggest-limits', async (req, res, next) => {
   try {
     const { masterLimit, categories } = req.body || {};
