@@ -135,4 +135,4 @@ if (process.env.NODE_ENV === 'production') {
   app.use(express.static(dist));
   app.get('*', (_req, res) => res.sendFile(join(dist, 'index.html')));
 }
-app.listen(process.env.PORT || 5000, process.env.HOST || '127.0.0.1', () => console.log('Trackit API ready'));
+app.listen(process.env.PORT || 5000, process.env.HOST || '0.0.0.0', () => console.log('Trackit API ready'));
