@@ -10,7 +10,13 @@ export function signedMoney(row) {
 }
 
 export function isCredit(row) {
-  return row.type === 'income' || row.category === 'Income / Refund' || Number(row.amount) < 0;
+  return (
+    row.transaction_type === 'income' ||
+    row.type === 'income' ||
+    row.category === 'Income / Allowance' ||
+    row.category === 'Income / Refund' ||
+    Number(row.amount) < 0
+  );
 }
 
 export function total(rows) {

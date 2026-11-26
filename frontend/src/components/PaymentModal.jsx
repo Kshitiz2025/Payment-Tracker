@@ -3,7 +3,9 @@ import { supabase } from '../supabaseClient';
 import { Receipt, X, Utensils, QrCode, CreditCard, Banknote, Tag, Check, Calendar } from 'lucide-react';
 
 export default function PaymentModal({ userId, payment, onClose, onSaved }) {
-  const [transactionType, setTransactionType] = useState(payment?.transaction_type || 'expense');
+  const [transactionType, setTransactionType] = useState(
+    payment?.transaction_type || (payment?.category === 'Income / Allowance' || payment?.category === 'Income / Refund' ? 'income' : 'expense')
+  );
   const pending = useRef(null);
   const submitting = useRef(false);
   const [errorMsg, setErrorMsg] = useState('');
@@ -20,6 +22,15 @@ export default function PaymentModal({ userId, payment, onClose, onSaved }) {
   });
 
   const upiApps = ['PhonePe', 'Google Pay', 'Paytm', 'Amazon Pay', 'Cred Pay', 'Other'];
+
+  const handleTypeChange = (nextType) => {
+    setTransactionType(nextType);
+    if (nextType === 'income' && formData.category === 'Food & Dining') {
+      setFormData(prev => ({ ...prev, category: 'Income / Allowance' }));
+    } else if (nextType === 'expense' && formData.category === 'Income / Allowance') {
+      setFormData(prev => ({ ...prev, category: 'Food & Dining' }));
+    }
+  };
 
   const quickAdd = (val) => {
     const current = parseFloat(formData.amount) || 0;
@@ -42,13 +53,15 @@ export default function PaymentModal({ userId, payment, onClose, onSaved }) {
     setLoading(true);
     setErrorMsg('');
     try {
-      // Preserve time if date is unchanged, otherwise set to noon on the selected date
-      const timestamp = payment?.created_at && payment.created_at.startsWith(formData.date) 
-        ? payment.created_at 
-        : new Date(`${formData.date}T12:00:00Z`).toISOString();
+      const today = new Date().toISOString().substring(0, 10);
+      const timestamp = payment?.created_at && payment.created_at.startsWith(formData.date)
+        ? payment.created_at
+        : formData.date === today
+          ? new Date().toISOString()
+          : new Date(`${formData.date}T12:00:00Z`).toISOString();
 
       const fields = {
-        amount: amount, // Master amount is always positive now
+        amount: amount,
         transaction_type: transactionType,
         category: formData.category,
         sub_category: formData.subCategory.trim(), 
@@ -132,7 +145,7 @@ export default function PaymentModal({ userId, payment, onClose, onSaved }) {
                 name="type"
                 value="expense"
                 checked={transactionType === 'expense'}
-                onChange={(e) => setTransactionType(e.target.value)}
+                onChange={(e) => handleTypeChange(e.target.value)}
                 className="text-indigo-600 focus:ring-indigo-500 w-4 h-4"
               />
               <span className="text-sm font-bold text-gray-700">Spent Money (Expense)</span>
@@ -144,7 +157,7 @@ export default function PaymentModal({ userId, payment, onClose, onSaved }) {
                 name="type"
                 value="income"
                 checked={transactionType === 'income'}
-                onChange={(e) => setTransactionType(e.target.value)}
+                onChange={(e) => handleTypeChange(e.target.value)}
                 className="text-emerald-500 focus:ring-emerald-500 w-4 h-4"
               />
               <span className="text-sm font-bold text-gray-700">Received Money (Income)</span>
@@ -208,7 +221,7 @@ export default function PaymentModal({ userId, payment, onClose, onSaved }) {
                   value={formData.category}
                   onChange={(e) => setFormData({ ...formData, category: e.target.value })}
                 >
-                  {payment?.category && !['Food & Dining', 'Entertainment', 'Groceries', 'Travel'].includes(payment.category) && <option>{payment.category}</option>}
+                  {payment?.category && !['Food & Dining', 'Entertainment', 'Groceries', 'Travel', 'Income / Allowance'].includes(payment.category) && <option>{payment.category}</option>}
                   <option>Food & Dining</option>
                   <option>Entertainment</option>
                   <option>Groceries</option>
