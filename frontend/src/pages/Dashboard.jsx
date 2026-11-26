@@ -2,7 +2,7 @@ import { chartTooltipProps } from '../chartTheme';
 import { useState } from 'react';
 import { supabase } from '../supabaseClient';
 import { useNavigate, useOutletContext } from 'react-router-dom';
-import { groupSpending, isCredit, money, monthSummary, total } from '../ledger';
+import { groupSpending, isCredit, money, monthSummary, total, newestFirst, signedMoney } from '../ledger';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 import { 
   ChevronLeft, ChevronRight, Calendar, 
@@ -236,7 +236,7 @@ export default function Dashboard() {
                 </thead>
                 <tbody className="divide-y divide-divider">
                   {!recentPayments.length && <tr><td colSpan={4} className="py-6 text-quiet">No payments recorded for this month.</td></tr>}
-                  {recentPayments.slice(0, 5).map((tx) => (
+                  {[...recentPayments].sort(newestFirst).slice(0, 5).map((tx) => (
                     <tr key={tx.id} className="hover:bg-subtle/50 transition-colors group">
                       <td className="py-4 pr-4">
                         <p className="font-bold text-heading text-sm">{tx.sub_category || tx.category}</p>
@@ -254,7 +254,9 @@ export default function Dashboard() {
                         </div>
                       </td>
                       <td className="py-4 text-right">
-                        <p className="font-extrabold text-heading text-sm">{isCredit(tx) ? '+' : '−'}{money(Math.abs(tx.amount))}</p>
+                        <p className={`font-extrabold text-sm ${isCredit(tx) ? 'text-emerald-600' : 'text-heading'}`}>
+                          {signedMoney(tx)}
+                        </p>
                       </td>
                     </tr>
                   ))}
