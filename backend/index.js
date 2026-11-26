@@ -30,9 +30,26 @@ const validName = name => typeof name === 'string' && name.length > 0 && name.le
 const validMoney = n => typeof n === 'number' && Number.isFinite(n) && n >= 0 && n <= 1e12;
 const app = express();
 
-app.use(helmet({
-  contentSecurityPolicy: process.env.NODE_ENV === 'production' ? undefined : false, // Allows Vite local dev
-}));
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'", "'unsafe-inline'"],
+        styleSrc: ["'self'", "'unsafe-inline'"],
+        imgSrc: ["'self'", "data:", "https:"],
+        fontSrc: ["'self'", "data:"],
+        connectSrc: [
+          "'self'",
+          "https://*.supabase.co",
+          "wss://*.supabase.co",
+          "https://api.groq.com",
+          "https://generativelanguage.googleapis.com",
+        ],
+      },
+    },
+  })
+);
 
 app.disable('x-powered-by');
 
