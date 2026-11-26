@@ -6,12 +6,19 @@ const listeners = new Set();
 function apply(value) {
   const root = document.documentElement;
   if (value === 'light' || value === 'dark') root.dataset.theme = value;
-  else delete root.dataset.theme;
+  else root.dataset.theme = 'light'; // Default to light instead of deleting dataset.theme
   for (const listener of listeners) listener();
 }
 
+// Initialize theme on first page load (defaults to 'light' if nothing is in localStorage)
+try {
+  apply(localStorage.getItem(key) || 'light');
+} catch {
+  apply('light');
+}
+
 window.addEventListener('storage', event => {
-  if (event.key === key || event.key === null) apply(event.newValue);
+  if (event.key === key || event.key === null) apply(event.newValue || 'light');
 });
 
 export function setTheme(value) {
@@ -28,5 +35,5 @@ function subscribe(listener) {
 }
 
 export function useTheme() {
-  return useSyncExternalStore(subscribe, () => document.documentElement.dataset.theme || 'system');
+  return useSyncExternalStore(subscribe, () => document.documentElement.dataset.theme || 'light');
 }
